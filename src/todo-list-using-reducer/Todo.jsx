@@ -1,38 +1,10 @@
-import { ACTION_TYPES } from "./Actions";
-import { useReducer, useState } from "react";
-import { nanoid } from "nanoid";
-import { INITIAL_STATE, reducer } from "./todoReducer";
+import { useContext } from "react";
+import { GlobalContext } from "../Context";
 
 import "./styles.css";
 
 const Todo = () => {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const [todoTitle, setTodoTitle] = useState("");
-
-  const date = new Date();
-
-  const todo = (title) => {
-    return {
-      title: title,
-      id: nanoid(),
-      time: date.toLocaleTimeString(),
-      isCompleted: false,
-    };
-  };
-
-  const addTodo = (title) => {
-    if (!todoTitle) {
-      alert("Please input your to-do");
-    } else dispatch({ type: ACTION_TYPES.ADD_TODO, payload: todo(title) });
-  };
-
-  const deleteTodo = (id) => {
-    dispatch({ type: ACTION_TYPES.DELETE_TODO, payload: id });
-  };
-
-  const handleCompleteTodo = (id) => {
-    dispatch({ type: ACTION_TYPES.COMPLETE_TODO, payload: id });
-  };
+  const { todos, addTodo, deleteTodo, handleCompleteTodo, todoTitle, setTodoTitle } = useContext(GlobalContext);
 
   return (
     <div>
@@ -50,7 +22,7 @@ const Todo = () => {
         Add
       </button>
       <h1>TO-DO List</h1>
-      {state.map((todo) => (
+      {todos.map((todo) => (
         <div key={todo.id}>
           <h1 className={todo.isCompleted ? "completed" : undefined}>
             {todo.title}
