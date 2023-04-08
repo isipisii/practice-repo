@@ -36,6 +36,10 @@ const Context = ({ children }) => {
     dispatch({ type: ACTION_TYPES.COMPLETE_TODO, payload: id });
   };
 
+  // const handleEditTodo = (title) => {
+  //   dispatch({type: ACTION_TYPES.EDIT_TODO,  title: title})
+  // }
+
   function onChange(e) {
     setUserName(e.target.value);
   }
@@ -53,7 +57,8 @@ const Context = ({ children }) => {
         deleteTodo,
         todo,
         setTodoTitle,
-        todoTitle
+        todoTitle,
+        // handleEditTodo
       }}
     >
       {children}

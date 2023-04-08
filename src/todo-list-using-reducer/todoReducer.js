@@ -22,5 +22,11 @@ export const reducer = (state, action) => {
             : todo
         ),
       };
+    // case ACTION_TYPES.EDIT_TODO:
+    //   return {
+    //     ...state,
+    //     todos: state.todos.map((todo) => todo.id === action.id ? { ...todo, title: action.title } : todo
+    //     ),
+    //   };
   }
 };
