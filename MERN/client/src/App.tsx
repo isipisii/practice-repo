@@ -1,6 +1,9 @@
+import { Col, Container, Row } from "react-bootstrap";
 import { useEffect, useState, FC } from "react";
 import { INote } from "./types";
 import Note from "./components/Note";
+import "./styles/index.css";
+import styles from "./styles/NotesPage.module.css"
 
 const App: FC = () => {
   const [notes, setNotes] = useState<INote[]>([]);
@@ -13,8 +16,10 @@ const App: FC = () => {
         });
         const data = await response.json();
 
-        const notes: INote[] = (data as INote[]).map(
-          (note): INote => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const notes: INote[] = (data as any).map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (note: any): INote => ({
             _id: note._id,
             title: note.title,
             text: note.text,
@@ -22,7 +27,6 @@ const App: FC = () => {
             updatedAt: note.updatedAt,
           })
         );
-
         setNotes(notes);
       } catch (error) {
         console.error(error);
@@ -34,11 +38,20 @@ const App: FC = () => {
   console.log(notes);
 
   return (
-    <div>
-      {notes.map((note, index) => (
-        <Note createdAt={note.createdAt} title={note.title} text={note.text} key={index} />
-      ))}
-    </div>
+    <Container>
+      <Row xs={1} md={2} xl={3} className="g-4">
+        {notes.map((note) => (
+          <Col key={note._id}>
+            <Note
+              className={styles.note}
+              createdAt={note.createdAt}
+              title={note.title}
+              text={note.text}
+            />
+          </Col>
+        ))}
+      </Row>
+    </Container>
   );
 };
 
