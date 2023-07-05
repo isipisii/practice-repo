@@ -10,9 +10,10 @@ interface NoteProps {
   note: INote;
   className?: string;
   onDeleteNoteClicked(note: INote): void
+  onNoteClicked(note: INote): void 
 }
 
-const Note: FC<NoteProps> = ({ note, className, onDeleteNoteClicked }) => {
+const Note: FC<NoteProps> = ({ note, className, onDeleteNoteClicked, onNoteClicked }) => {
   const {updatedAt, createdAt, title, text} = note
 
   let createdUpdatedText: string;
@@ -24,7 +25,7 @@ const Note: FC<NoteProps> = ({ note, className, onDeleteNoteClicked }) => {
   }
 
   return (
-    <Card className={`${styles.noteCard} ${className}`}>
+    <Card className={`${styles.noteCard} ${className}`} onClick={() => onNoteClicked(note)}>
       <Card.Body className={styles.cardBody}>
         <Card.Title className={styleUtils.flexCenter}>
           {title}
