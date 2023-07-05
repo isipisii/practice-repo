@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Container, Row, Button, Spinner } from "react-bootstrap";
 import { useEffect, useState, FC } from "react";
 import { INote } from "./types";
 import Note from "./components/Note";
-import AddNoteDialog from "./components/AddNoteDialog";
+import AddEditNoteDialog from "./components/AddEditNoteDialog";
 import "./styles/index.css";
 import styles from "./styles/NotesPage.module.css";
 import styleUtils from "./styles/utils.module.css";
@@ -13,10 +13,15 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 const App: FC = () => {
   const [notes, setNotes] = useState<INote[]>([]);
   const [showAddNoteDialog, setShowAddNoteDialog] = useState<boolean>(false);
+  const [noteToEdit, setNoteToEdit] = useState<INote | null>(null);
+  const [notesLoading, setNotesLoading] = useState<boolean>(true);
+  const [showNotesLoadingError, setShowNotesLoadingError] =
+    useState<boolean>(false);
 
   useEffect(() => {
     async function getNotes(): Promise<void> {
       try {
+        setNotesLoading(true);
         const notes = await NotesApi.fetchNotes();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         // const notes: INote[] = (data).map(
@@ -32,6 +37,9 @@ const App: FC = () => {
         setNotes(notes);
       } catch (error) {
         console.error(error);
+        setShowNotesLoadingError(true);
+      } finally {
+        setNotesLoading(false);
       }
     }
     getNotes();
@@ -50,34 +58,56 @@ const App: FC = () => {
     }
   }
 
+  const Notes = (
+    <Row xs={1} md={2} xl={3} className={`g-4 ${styles.noteGrid}`}>
+      {notes.map((note) => (
+        <Col key={note._id}>
+          <Note
+            className={styles.note}
+            note={note}
+            onDeleteNoteClicked={deleteNote}
+            onNoteClicked={setNoteToEdit}
+          />
+        </Col>
+      ))}
+    </Row>
+  );
   return (
     <Container>
       <Button
         onClick={() => setShowAddNoteDialog(true)}
         className={`${styleUtils.blockCenter} mb-4 ${styleUtils.flexCenter}`}
-      > 
+      >
         <AiOutlinePlusCircle />
         Add new Note
       </Button>
-      <Row xs={1} md={2} xl={3} className="g-4">
-        {notes.map((note) => (
-          <Col key={note._id}>
-            <Note
-              className={styles.note}
-              note={note}
-              onDeleteNoteClicked={deleteNote}
-            />
-          </Col>
-        ))}
-      </Row>
-
+      {notesLoading && <Spinner animation="border" variant="primary" />}
+      {showNotesLoadingError && <p>Something went wrong</p>}
+      {!notesLoading && !showNotesLoadingError && (
+        <>{notes.length > 0 ? Notes : <p>You dont have any notes yet.</p>}</>
+      )}
       {showAddNoteDialog && (
-        <AddNoteDialog
+        <AddEditNoteDialog
           onDismiss={() => setShowAddNoteDialog(false)}
           onNoteSaved={(newNote) => {
             setNotes([...notes, newNote]);
             setShowAddNoteDialog(false);
           }}
+          noteToEdit={noteToEdit}
+        />
+      )}
+
+      {noteToEdit && (
+        <AddEditNoteDialog
+          onDismiss={() => setNoteToEdit(null)}
+          onNoteSaved={(updatedNote) => {
+            const updatedNotes: INote[] = notes.map((note) =>
+              note._id === updatedNote._id ? updatedNote : note
+            );
+            setNotes(updatedNotes);
+            setNoteToEdit(null);
+          }}
+          noteToEdit={noteToEdit}
         />
       )}
     </Container>
