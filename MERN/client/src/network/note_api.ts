@@ -1,4 +1,10 @@
-import { INote, INoteInput, IUser, ISignUpCredentials, ILoginCredentials } from "../types";
+import {
+  INote,
+  INoteInput,
+  IUser,
+  ISignUpCredentials,
+  ILoginCredentials,
+} from "../types";
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
   const response = await fetch(input, init);
@@ -28,7 +34,7 @@ export async function signUp(credentials: ISignUpCredentials): Promise<IUser> {
     },
     body: JSON.stringify(credentials),
   });
-  return response.json()
+  return response.json();
 }
 
 export async function logIn(credentials: ILoginCredentials): Promise<IUser> {
@@ -39,7 +45,11 @@ export async function logIn(credentials: ILoginCredentials): Promise<IUser> {
     },
     body: JSON.stringify(credentials),
   });
-  return response.json()
+  return response.json();
+}
+
+export async function logOut(): Promise<void> {
+  await fetchData("http://localhost:5000/api/users/logout", { method: "POST" });
 }
 
 export async function fetchNotes(): Promise<INote[]> {

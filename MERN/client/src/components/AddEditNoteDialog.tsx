@@ -3,6 +3,7 @@ import { Modal, Form, Button } from "react-bootstrap";
 import { INote, INoteInput } from "../types";
 import { useForm } from "react-hook-form";
 import * as NotesApi from "../network/note_api";
+import TextInputField from "./form/TextInputField";
 
 interface Props {
   noteToEdit?: INote | null;
@@ -51,28 +52,24 @@ const AddEditNoteDialog: FC<Props> = ({
 
       <Modal.Body>
         <Form id="addEditNoteForm" onSubmit={handleSubmit(onSubmit)}>
-          <Form.Group className="mb-3">
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Title"
-              {...register("title", { required: "Required" })}
-              isInvalid={!!errors.title}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.title?.message}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Text</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Text"
-              rows={5}
-              {...register("text")}
-            />
-          </Form.Group>
+          <TextInputField 
+            name="title"
+            label="Title"
+            type="text"
+            placeholder="Title"
+            register={register}
+            registerOptions={{ required: "Required" }}
+            error={errors.title}
+          />
+          
+          <TextInputField 
+            name="text"
+            label="Text"
+            as="textarea"
+            rows={5}
+            placeholder="Text"
+            register={register}
+          />
         </Form>
       </Modal.Body>
 
